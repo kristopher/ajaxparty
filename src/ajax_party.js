@@ -43,7 +43,6 @@ Ajax.Party.create = function(class_name, options, class_default_options) {
   this[class_name].addMethods(Ajax.Party.Util.Methods);  
   this[class_name].defaultOptions = (class_default_options || {});
   this[class_name].create = this.create;
-  return this[class_name];
 }
 
 Ajax.Party.Util = {};
