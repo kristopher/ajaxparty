@@ -36,7 +36,6 @@ Ajax.Party.create = function(class_name, options, class_default_options) {
     default_options: Object.extend(default_options, options),
     
     initialize: function($super, url, parameters, callback, options) {
-      this.defaultOptions = Object.clone(this.constructor.defaultOptions);
       $super(url, this.getRequestOptions(parameters, callback, options));          
     }
   });
@@ -51,7 +50,7 @@ Ajax.Party.Util.Methods = {
   getRequestOptions: function(parameters, callback, options) {
     var request_options = new Object();
     Object.extend(request_options, Object.clone(this.default_options))
-    Object.extend(request_options, this.defaultOptions)    
+    Object.extend(request_options, Object.clone(this.constructor.defaultOptions))    
     request_options.parameters = Object.extend(Object.clone(request_options.parameters), parameters)    
     request_options.onSuccess = callback;
     if (options) {
@@ -68,7 +67,3 @@ Ajax.Party.create('Post');
 Ajax.Party.create('Get', { method: 'get'});
 Ajax.Party.create('Put', { method: 'put'});
 Ajax.Party.create('Delete', { method: 'delete'});
-
-
-
-
