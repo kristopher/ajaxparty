@@ -38,30 +38,43 @@
     },
     
     teardown: function() {
-      Ajax.Party.Test.defaultOptions = {};  
-      Ajax.Party.Base.defaultOptions = {
-        parameters: {},
-        onSuccess: Prototype.emptyFunction,
-        onFailure: Prototype.emptyFunction  
-      };
+      Ajax.Party.Test.class_default_options = {};  
+      Ajax.Party.class_default_options = {};
     },
+    
+    test_ajax_party_post_get_put_delete_are_created: function() { with(this) {
+      ['Post', 'Get', 'Put', 'Delete']._each(function(method) {
+        assertNotUndefined(Ajax.Party[method]);
+      });
+    }},
     
     test_ajax_party_create_generates_a_new_klass: function() { with(this) {
       assertNotUndefined(Ajax.Party.Test);
     }},
     
     test_ajax_party_create_generates_a_default_options_class_variable: function() {with (this) {
-      assertNothingRaised(function() { Ajax.Party.Test.defaultOptions.test });
+      assertNothingRaised(function() { Ajax.Party.Test.class_default_options.test });
     }},
     
     test_ajax_party_create_generates_the_correct_default_default_options_class_variable: function() { with(this) {
-      assertHashEqual(Ajax.Party.Test.defaultOptions, {});
+      assertHashEqual(Ajax.Party.Test.class_default_options, {});
     }},
     
     test_ajax_party_create_generates_the_correct_default_instance_default_options: function() { with(this) {
       var test_instance = new Ajax.Party.Test('/');
-      assertEqual(test_instance.options.method, 'post');
-      assertHashEqual(test_instance.options.parameters, {});
+      assertNotUndefined(test_instance.default_options);
+      assertHashEqual(test_instance.default_options, {});
+    }},
+    
+    test_ajax_party_create_generates_the_current_class_default_options: function() { with(this) {
+      Ajax.Party.create('Test2', {}, { evalJSON: false });
+      assertHashEqual(Ajax.Party.Test2.class_default_options, { evalJSON: false });
+    }},
+    
+    test_ajax_party_create_generates_the_currect_instance_default_options: function() { with(this) {
+      Ajax.Party.create('Test2', { evalJSON: false });
+      var test_instance = new Ajax.Party.Test2('/');
+      assertHashEqual(test_instance.default_options, { evalJSON: false });      
     }},
     
     test_ajax_party_create_generates_the_correct_instance_default_options_parameters: function() { with(this) {
@@ -83,19 +96,36 @@
     }},
     
     test_ajax_party_create_generated_the_correct_instance_options_from_class_default_options: function() { with(this) {
-      Ajax.Party.Test.defaultOptions = { evalJSON: false, parameters: { test: 'test'} };
+      Ajax.Party.Test.class_default_options = { evalJSON: false, parameters: { test: 'test'} };
       var test_instance = new Ajax.Party.Test('/');
       assertEqual(test_instance.options.evalJSON, false);
       assertHashEqual(test_instance.options.parameters, { test: 'test' });
     }},
     
     test_ajax_party_instance_uses_ajax_party_base_options: function() { with(this) {
-      Ajax.Party.Base.defaultOptions = { evalJSON: false, parameters: { test: 'test'} };
+      Ajax.Party.class_default_options = { evalJSON: false, parameters: { test: 'test'} };
       var test_instance = new Ajax.Party.Test('/');
       assertEqual(test_instance.options.evalJSON, false);
       assertHashEqual(test_instance.options.parameters, { test: 'test' });      
     }}
   }); 
+
+
+  new Test.Unit.Runner({
+    setup: function() {
+    },
+    
+    teardown: function() {
+      Ajax.Party.class_default_options = {};
+    },
+        
+    test_ajax_party_instance_uses_ajax_party_class_options: function() { with(this) {
+      Ajax.Party.class_default_options = { evalJSON: false, parameters: { test: 'test'} };
+      var test_instance = new Ajax.Party.Post('/');
+      assertEqual(test_instance.options.evalJSON, false);
+      assertHashEqual(test_instance.options.parameters, { test: 'test' });      
+    }}
+  });
 // ]]>
 </script>
 </body>
