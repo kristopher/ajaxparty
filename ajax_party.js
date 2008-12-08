@@ -24,90 +24,26 @@ Ajax.Party.Base.defaultOptions = {
   onFailure: Prototype.emptyFunction  
 },
 
-Ajax.Party.Get = Class.create(Ajax.Party, {  
-
-  default_options: {  
-    method: 'get',
-    parameters: {},
-    onSuccess: Prototype.emptyFunction,
-    onFailure: Prototype.emptyFunction
-  },
-      
-  initialize: function($super, url, parameters, callback, options) {
-    this.defaultOptions = Object.clone(Ajax.Party.Post.defaultOptions);
-    $super(url, this.getRequestOptions(parameters, callback, options));    
-  } 
-});
-
-Ajax.Party.Get.defaultOptions = {
-  parameters: {},
-  onSuccess: Prototype.emptyFunction,
-  onFailure: Prototype.emptyFunction
-}
-
-Ajax.Party.Post = Class.create(Ajax.Party, {  
-
-  default_options: {  
+Ajax.Party.create = function(class_name, options, class_default_options) {
+  var default_options = {
     method: 'post',
     parameters: {},
     onSuccess: Prototype.emptyFunction,
-    onFailure: Prototype.emptyFunction
-  },
-      
-  initialize: function($super, url, parameters, callback, options) {
-    this.defaultOptions = Ajax.Party.Post.defaultOptions;
-    $super(url, this.getRequestOptions(parameters, callback, options));    
-  } 
-});
-
-Ajax.Party.Post.defaultOptions = {
-  parameters: {},
-  onSuccess: Prototype.emptyFunction,
-  onFailure: Prototype.emptyFunction
-}
-
-Ajax.Party.Put = Class.create(Ajax.Party, {
-
-  default_options: {  
-    method: 'put',
-    parameters: {},
-    onSuccess: Prototype.emptyFunction,
-    onFailure: Prototype.emptyFunction
-  },
+    onFailure: Prototype.emptyFunction      
+  }
   
-  initialize: function($super, url, parameters, callback, options) {
-    this.defaultOptions = Ajax.Party.Put.defaultOptions;
-    $super(url, this.getRequestOptions(parameters, callback, options));    
-  } 
+  this[class_name] = Class.create(this, {
+    default_options: Object.extend(default_options, options),
+    
+    initialize: function($super, url, parameters, callback, options) {
+      this.defaultOptions = Object.clone(this.constructor.defaultOptions);
+      $super(url, this.getRequestOptions(parameters, callback, options));          
+    }
+  });
   
-});
-
-Ajax.Party.Put.defaultOptions = {
-  parameters: {},
-  onSuccess: Prototype.emptyFunction,
-  onFailure: Prototype.emptyFunction
-}
-
-Ajax.Party.Delete = Class.create(Ajax.Party, {
-
-  default_options: {  
-    method: 'delete',
-    parameters: {},
-    onSuccess: Prototype.emptyFunction,
-    onFailure: Prototype.emptyFunction
-  },
-
-  initialize: function($super, url, parameters, callback, options) {
-    this.defaultOptions = Ajax.Party.Delete.defaultOptions;
-    $super(url, this.getRequestOptions(parameters, callback, options));    
-  } 
-      
-});
-
-Ajax.Party.Delete.defaultOptions = {
-  parameters: {},
-  onSuccess: Prototype.emptyFunction,
-  onFailure: Prototype.emptyFunction
+  this[class_name].addMethods(Ajax.Party.Util.Methods);  
+  this[class_name].defaultOptions = (class_default_options || {});
+  this[class_name].create = this.create;
 }
 
 Ajax.Party.Util = {};
@@ -128,24 +64,11 @@ Ajax.Party.Util.Methods = {
   
 };
 
-Ajax.Party.Get.addMethods(Ajax.Party.Util.Methods)
-Ajax.Party.Post.addMethods(Ajax.Party.Util.Methods)
-Ajax.Party.Put.addMethods(Ajax.Party.Util.Methods)
-Ajax.Party.Delete.addMethods(Ajax.Party.Util.Methods)
+Ajax.Party.create('Post');
+Ajax.Party.create('Get', { method: 'get'});
+Ajax.Party.create('Put', { method: 'put'});
+Ajax.Party.create('Delete', { method: 'delete'});
 
-window.Get = function(url, parameters, callback, options) {
-  new Ajax.Party.Get(url, parameters, callback, options);
-}
 
-window.Post = function(url, parameters, callback, options) {
-  new Ajax.Party.Post(url, parameters, callback, options);
-}
 
-window.Put = function(url, parameters, callback, options) {
-  new Ajax.Party.Post(url, parameters, callback, options);
-}
-
-window.Delete = function(url, parameters, callback, options) {
-  new Ajax.Party.Post(url, parameters, callback, options);
-}
 
