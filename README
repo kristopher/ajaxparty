@@ -1,0 +1,81 @@
+= AjaxParty
+
+Simplified Ajax Requests with class inheritable options.
+
+
+== Example
+
+Syntax
+  new Ajax.Party.Post(url, parameters, onSuccessCallback, options)
+  
+Any Prototype Ajax Options can be passed as options. 
+
+A standard form submission request looks like this:
+  
+  new Ajax.Party.Post($('form').action, $('form').serialize(true), OnsuccessCallback) 
+
+
+Have something you need to add to all requests? Maybe the session id or 
+rails autenticity token? Just include it in the default options.
+
+  Ajax.Party.class_default_options = {
+    parameters: {
+      'authenticity_token': 'some_token'
+    }
+  }
+  
+Maybe you only want to set the options for post requests?
+  
+  Ajax.Party.Post.class_default_options = {
+    evalJSON: true
+  }
+  
+Every request that uses Ajax.Party.Post or one of it's subclasses will have
+evalJSON set to true.
+
+You can create your own subclasses to further refine options. You can specify 
+default instance and class options.
+
+  // Ajax.Party.create(class_name, default_instance_options, default_class_options)
+  Ajax.Party.create('FormPost', {}, { method: 'post', onSuccess: StandardForm.callback })
+  new Ajax.Party.FormPost($('form').action, $('form').serialize(true))
+
+Or we could subclass Ajax.Party.Post and skip the method option!
+    
+  Ajax.Party.Post.create('FormPost', {}, { onSuccess: StandardForm.callback })
+  new Ajax.Party.Post.FormPost($('form').action, $('form').serialize(true))
+
+You can go even further by continuing the subclass craziness.
+ 
+  Ajax.Party.Post.FormPost.create('SpecialForm', {} { parameters: {special_parameter} })
+  new Ajax.Party.Post.FormPost.SpecialForm($('form').action, $('form').serialize(true))
+  
+
+Subclasses of AjaxParty will inherit all options of its superclasses.
+
+  Ajax.Party.class_default_options = {
+    parameters: {
+      'authenticity_token': 'some_token'
+    }
+  }
+
+  Ajax.Party.Post.class_default_options = {
+    evalJSON: true
+  }
+  
+          
+Ajax.Party.Post.FromPost will automaticly have the authenticity token and 
+evalJSON parameters as will any subclasses of it. The subclass options always 
+take precedence over the superclass options, class options take precedence over 
+instance default options and options passed to the method take precedence over all.
+
+
+== Coming Soon
+
+Better Documentation
+Ajax.Party.AutoComplete
+Testing in something other than Firefox 3
+
+
+Homepage:: http://github.com/kristopher/ajaxparty
+License:: Copyright (c) 2008 Kristopher Chambers <maito:kristopher.chambers@gmail.com> and Elijah Miller <mailto:elijah.miller@gmail.com>, released under the MIT license
