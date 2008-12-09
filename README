@@ -69,7 +69,6 @@ evalJSON parameters as will any subclasses of it. The subclass options always
 take precedence over the superclass options, class options take precedence over 
 instance default options and options passed to the method take precedence over all.
 
-
 == Coming Soon
 
 Better Documentation
