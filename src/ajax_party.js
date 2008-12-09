@@ -26,11 +26,11 @@ Ajax.Party.Util.Methods = {
   Class: {
     class_default_options: {},
     
-    create: function(class_name, options, class_default_options) {
-      options = (options || {});
+    create: function(class_name, default_instance_options, class_default_options) {
+      default_instance_options = (default_instance_options || {});
 
       var new_class = this[class_name] = Class.create(this, {
-        default_options: options,
+        default_options: default_instance_options,
         
         initialize: function($super, url, parameters, callback, options) {
           $super(url, this.getRequestOptions(parameters, callback, options));          
@@ -44,6 +44,7 @@ Ajax.Party.Util.Methods = {
   },
   
   Instance: {
+    // TODO simplify
     getRequestOptions: function(parameters, callback, options) {
       var request_options = {};
       Object.extend(request_options, Object.clone(this.default_options))
