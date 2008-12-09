@@ -4,7 +4,6 @@ if (!Prototype) {
 }
 
 Ajax.Party = Class.create(Ajax.Request, {
-  
   getBaseRequestOptions: function(options) {
     var request_options = {}
     Object.extend(request_options, Object.clone(Ajax.Party.class_default_options));
@@ -16,7 +15,7 @@ Ajax.Party = Class.create(Ajax.Request, {
     return request_options
   },
   
-  initialize: function($super, url, options) {
+  initialize: function($super, url, parameters, callback, options) {
     $super(url, this.getBaseRequestOptions(options));
   } 
 });
@@ -24,7 +23,7 @@ Ajax.Party = Class.create(Ajax.Request, {
 Ajax.Party.Util = {};
 Ajax.Party.Util.Methods = {
   Class: {
-    class_default_options: {},
+    class_default_options: new Object(),
     
     create: function(class_name, default_instance_options, class_default_options) {
       default_instance_options = (default_instance_options || {});
@@ -33,12 +32,13 @@ Ajax.Party.Util.Methods = {
         default_options: default_instance_options,
         
         initialize: function($super, url, parameters, callback, options) {
-          $super(url, this.getRequestOptions(parameters, callback, options));          
+          $super(url, null, null, this.getRequestOptions(parameters, callback, options));          
         }
       }).addMethods(Ajax.Party.Util.Methods.Instance);
 
       Object.extend(new_class, Ajax.Party.Util.Methods.Class);
-      Object.extend(new_class.class_default_options, class_default_options);
+      // TODO better way to work around unwanted class level inhertience of this object?
+      new_class.class_default_options = (class_default_options || {});
       return new_class;  
     }
   },
@@ -49,8 +49,10 @@ Ajax.Party.Util.Methods = {
       var request_options = {};
       Object.extend(request_options, Object.clone(this.default_options))
       Object.extend(request_options, Object.clone(this.constructor.class_default_options))    
-      request_options.parameters = Object.extend(Object.clone(request_options.parameters), parameters)    
-      request_options.onSuccess = callback;
+      request_options.parameters = Object.extend(Object.clone(request_options.parameters || {}), parameters)    
+      if (callback && !request_options.onSuccess) {
+        request_options.onSuccess = callback;
+      }
       if (options) {
         Object.extend(request_options.parameters, options.parameters)
         delete options.parameters        
