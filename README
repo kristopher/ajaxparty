@@ -20,18 +20,18 @@ rails autenticity token? Just include it in the default options.
 
   Ajax.Party.class_default_options = {
     parameters: {
-      'authenticity_token': 'some_token'
+      'session_id': 'id'
     }
   }
   
 Maybe you only want to set the options for post requests?
   
   Ajax.Party.Post.class_default_options = {
-    evalJSON: true
+    'authenticity_token': 'some_token
   }
   
 Every request that uses Ajax.Party.Post or one of it's subclasses will have
-evalJSON set to true.
+authenticity_token.
 
 You can create your own subclasses to further refine options. You can specify 
 default instance and class options.
@@ -75,7 +75,7 @@ instance default options and options passed to the method take precedence over a
 Better Documentation
 Ajax.Party.AutoComplete
 Testing in something other than Firefox 3
-
+Parameters argument can be passed as a function
 
 Homepage:: http://github.com/kristopher/ajaxparty
 License:: Copyright (c) 2008 Kristopher Chambers <maito:kristopher.chambers@gmail.com> and Elijah Miller <mailto:elijah.miller@gmail.com>, released under the MIT license
