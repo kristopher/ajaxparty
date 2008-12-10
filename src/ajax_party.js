@@ -35,8 +35,11 @@ Ajax.Party.Util.Methods = {
       });
 
       new_class.addMethods(Ajax.Party.Util.Methods.Instance);
-      new_class.addMethods({ default_options: default_instance_options });      
-      new_class.addMethods({ klass: this[class_name], superclass: this });
+      new_class.addMethods({
+        default_options: default_instance_options,
+        klass: this[class_name], 
+        superclass: this    
+      });      
       Object.extend(new_class, Ajax.Party.Util.Methods.Class);
       new_class.class_default_options = (class_default_options || {});
       return new_class;  
