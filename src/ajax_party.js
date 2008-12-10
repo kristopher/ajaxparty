@@ -5,14 +5,10 @@ if (!Prototype) {
 
 Ajax.Party = Class.create(Ajax.Request, {
   getBaseRequestOptions: function(options) {
-    var request_options = {}
-    Object.extend(request_options, Object.clone(Ajax.Party.class_default_options));
-    if (options) {
-      request_options.parameters = Object.extend(Object.clone(request_options.parameters), options.parameters);
-      delete options.parameters;
-      Object.extend(request_options, options);    
-    }
-    return request_options
+    var request_options = {};
+    console.debug('a');
+    request_options = this.mergeOptions(Ajax.Party.class_default_options, options);
+    return request_options;
   },
   
   initialize: function($super, url, parameters, callback, options) {
@@ -26,45 +22,80 @@ Ajax.Party.Util.Methods = {
     class_default_options: new Object(),
     
     create: function(class_name, default_instance_options, class_default_options) {
-      default_instance_options = (default_instance_options || {});
-
+      
+      default_instance_options = (default_instance_options || {});      
+      
       var new_class = this[class_name] = Class.create(this, {
-        default_options: default_instance_options,
-        
         initialize: function($super, url, parameters, callback, options) {
-          $super(url, null, null, this.getRequestOptions(parameters, callback, options));          
+          //FIXME
+          var options = this.getRequestOptions(parameters, callback, options);
+          this.setCurrentKlass()
+          $super(url, null, null, options);          
         }
-      }).addMethods(Ajax.Party.Util.Methods.Instance);
+      });
 
+      new_class.addMethods(Ajax.Party.Util.Methods.Instance);
+      new_class.addMethods({ default_options: default_instance_options });      
+      new_class.addMethods({ klass: this[class_name], superclass: this });
       Object.extend(new_class, Ajax.Party.Util.Methods.Class);
-      // TODO better way to work around unwanted class level inhertience of this object?
       new_class.class_default_options = (class_default_options || {});
       return new_class;  
     }
   },
   
   Instance: {
-    // TODO simplify
     getRequestOptions: function(parameters, callback, options) {
       var request_options = {};
-      Object.extend(request_options, Object.clone(this.default_options))
-      Object.extend(request_options, Object.clone(this.constructor.class_default_options))    
-      request_options.parameters = Object.extend(Object.clone(request_options.parameters || {}), parameters)    
+      request_options = this.mergeOptions(request_options, this.default_options);
+      request_options = this.mergeOptions(request_options, this.klass.class_default_options);
+      request_options = this.mergeOptions(request_options, { parameters: (parameters || {}) })
       if (callback && !request_options.onSuccess) {
         request_options.onSuccess = callback;
       }
-      if (options) {
-        Object.extend(request_options.parameters, options.parameters)
-        delete options.parameters        
-        Object.extend(request_options, options)
-      }
+      request_options = this.mergeOptions(request_options, options);      
       return request_options;
-    }
+    },    
+
+    perpareOptionsForMerge: function(object) {
+      if (object) {
+        object = Object.clone(object)
+        if (object.parameters) {
+          if (Object.isFunction(object.parameters)) {
+            object.parameters = object.parameters();
+          }      
+          object.parameters = Object.clone(object.parameters);
+        }
+        return object; 
+      } else {
+        return {};
+      }
+    },
+    
+    mergeOptions: function(destination, source) {
+      destination = this.perpareOptionsForMerge(destination);
+      source = this.perpareOptionsForMerge(source);
+      if (source.parameters) {
+        if (destination.parameters) {
+          destination.parameters = Object.extend(Object.clone(destination.parameters), Object.clone(source.parameters));      
+        } else {
+          destination.parameters = Object.clone(source.parameters);
+        }
+        delete source.parameters;
+      }
+      return Object.extend(destination, source)
+    },
+    
+    setCurrentKlass: function() {
+      //FIXME
+      this.klass = this.superclass;
+      this.superclass = this.klass.superclass;
+    }    
   }
 };
 
+Ajax.Party.addMethods(Ajax.Party.Util.Methods.Instance);
 Object.extend(Ajax.Party, Ajax.Party.Util.Methods.Class);
-
+Ajax.Party.name = 'party'
 Ajax.Party.create('Post');
 Ajax.Party.create('Get', { method: 'get'});
 Ajax.Party.create('Put', { method: 'put'});
