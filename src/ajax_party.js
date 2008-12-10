@@ -28,7 +28,7 @@ Ajax.Party.Util.Methods = {
       var new_class = this[class_name] = Class.create(this, {
         initialize: function($super, url, parameters, callback, options) {
           //FIXME
-          this.reqeust_options = this.setRequestOptions(parameters, callback, options);
+          this.request_options = this.getRequestOptions(parameters, callback, options);
           this.setCurrentKlass()
           $super(url, null, null, this.request_options);          
         }
@@ -45,7 +45,7 @@ Ajax.Party.Util.Methods = {
   
   Instance: {
     getRequestOptions: function(parameters, callback, options) {
-      var request_options;
+      var request_options = {};
       request_options = this.mergeOptions(request_options, this.default_options);
       request_options = this.mergeOptions(request_options, this.klass.class_default_options);
       request_options = this.mergeOptions(request_options, { parameters: (parameters || {}) })
