@@ -4,15 +4,8 @@ if (!Prototype) {
 }
 
 Ajax.Party = Class.create(Ajax.Request, {
-  //FIXME this is probably not necessary now. Just use the subclass instance method. 
-  getBaseRequestOptions: function(options) {
-    var request_options = {};
-    request_options = this.mergeOptions(Ajax.Party.class_default_options, options);
-    return request_options;
-  },
-  
   initialize: function($super, url, parameters, callback, options) {
-    $super(url, this.getBaseRequestOptions(options));
+    $super(url, this.getRequestOptions(options));
   } 
 });
 
@@ -28,7 +21,7 @@ Ajax.Party.Util.Methods = {
       var new_class = this[class_name] = Class.create(this, {
         initialize: function($super, url, parameters, callback, options) {
           //FIXME
-          this.request_options = this.getRequestOptions(parameters, callback, options);
+          this.request_options = this.getRequestOptions(options, parameters, callback);
           this.setCurrentKlass()
           $super(url, null, null, this.request_options);          
         }
@@ -47,7 +40,7 @@ Ajax.Party.Util.Methods = {
   },
   
   Instance: {
-    getRequestOptions: function(parameters, callback, options) {
+    getRequestOptions: function(options, parameters, callback) {
       var request_options = {};
       request_options = this.mergeOptions(request_options, this.default_options);
       request_options = this.mergeOptions(request_options, this.klass.class_default_options);
