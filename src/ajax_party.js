@@ -4,9 +4,9 @@ if (!Prototype) {
 }
 
 Ajax.Party = Class.create(Ajax.Request, {
+  //FIXME this is probably not necessary now. Just use the subclass instance method. 
   getBaseRequestOptions: function(options) {
     var request_options = {};
-    console.debug('a');
     request_options = this.mergeOptions(Ajax.Party.class_default_options, options);
     return request_options;
   },
@@ -28,9 +28,9 @@ Ajax.Party.Util.Methods = {
       var new_class = this[class_name] = Class.create(this, {
         initialize: function($super, url, parameters, callback, options) {
           //FIXME
-          var options = this.getRequestOptions(parameters, callback, options);
+          this.reqeust_options = this.setRequestOptions(parameters, callback, options);
           this.setCurrentKlass()
-          $super(url, null, null, options);          
+          $super(url, null, null, this.request_options);          
         }
       });
 
@@ -45,7 +45,7 @@ Ajax.Party.Util.Methods = {
   
   Instance: {
     getRequestOptions: function(parameters, callback, options) {
-      var request_options = {};
+      var request_options;
       request_options = this.mergeOptions(request_options, this.default_options);
       request_options = this.mergeOptions(request_options, this.klass.class_default_options);
       request_options = this.mergeOptions(request_options, { parameters: (parameters || {}) })
@@ -57,6 +57,7 @@ Ajax.Party.Util.Methods = {
     },    
 
     perpareOptionsForMerge: function(object) {
+      // TODO see if all this cloning necessary
       if (object) {
         object = Object.clone(object)
         if (object.parameters) {
@@ -72,6 +73,7 @@ Ajax.Party.Util.Methods = {
     },
     
     mergeOptions: function(destination, source) {
+      // TODO see if all this cloning necessary
       destination = this.perpareOptionsForMerge(destination);
       source = this.perpareOptionsForMerge(source);
       if (source.parameters) {
@@ -86,7 +88,7 @@ Ajax.Party.Util.Methods = {
     },
     
     setCurrentKlass: function() {
-      //FIXME
+      //FIXME create an array([[klass,superclass]]) at class creation time and shift through them as we go up the chain.
       this.klass = this.superclass;
       this.superclass = this.klass.superclass;
     }    
@@ -95,7 +97,7 @@ Ajax.Party.Util.Methods = {
 
 Ajax.Party.addMethods(Ajax.Party.Util.Methods.Instance);
 Object.extend(Ajax.Party, Ajax.Party.Util.Methods.Class);
-Ajax.Party.name = 'party'
+
 Ajax.Party.create('Post');
 Ajax.Party.create('Get', { method: 'get'});
 Ajax.Party.create('Put', { method: 'put'});
