@@ -14,7 +14,10 @@ A standard form submission request looks like this:
   
   new Ajax.Party.Post($('form').action, $('form').serialize(true), OnsuccessCallback) 
 
-
+Or you can pass the parameters function as an argument.
+ 
+  new Ajax.Party.Post('/', someFunctionThatReturnsAnObject, onSuccessCallback)
+  
 Have something you need to add to all requests? Maybe the session id or 
 rails autenticity token? Just include it in the default options.
 
@@ -38,17 +41,22 @@ default instance and class options.
 
   // Ajax.Party.create(class_name, default_instance_options, default_class_options)
   Ajax.Party.create('FormPost', {}, { method: 'post', onSuccess: StandardForm.callback })
-  new Ajax.Party.FormPost($('form').action, $('form').serialize(true))
+  new Ajax.Party.FormPost($('form').action)
 
 Or we could subclass Ajax.Party.Post and skip the method option!
     
   Ajax.Party.Post.create('FormPost', {}, { onSuccess: StandardForm.callback })
   new Ajax.Party.Post.FormPost($('form').action, $('form').serialize(true))
 
-You can go even further by continuing the subclass craziness.
+Or we could set set the class default option parameters as a function.
+
+  Ajax.Party.Post.create('FormPost', {}, { parameters: function() { $('form').serialize(true) }, onSuccess: StandardForm.callback })
+  new Ajax.Party.Post.FormPost($('form').action)
+
+Or you can go even further by continuing the subclass craziness.
  
-  Ajax.Party.Post.FormPost.create('SpecialForm', {} { parameters: {special_parameter} })
-  new Ajax.Party.Post.FormPost.SpecialForm($('form').action, $('form').serialize(true))
+  Ajax.Party.Post.FormPost.create('SpecialForm', {} { parameters: { special_parameter } })
+  new Ajax.Party.Post.FormPost.SpecialForm($('form').action)
   
 
 Subclasses of AjaxParty will inherit all options of its superclasses.
@@ -74,7 +82,7 @@ instance default options and options passed to the method take precedence over a
 Better Documentation
 Ajax.Party.AutoComplete
 Testing in something other than Firefox 3
-Parameters argument can be passed as a function
+Parameters argument can be passed as a urlencode string
 
 Homepage:: http://github.com/kristopher/ajaxparty
 License:: Copyright (c) 2008 Kristopher Chambers <maito:kristopher.chambers@gmail.com> and Elijah Miller <mailto:elijah.miller@gmail.com>, released under the MIT license
