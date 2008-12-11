@@ -12,24 +12,20 @@ Ajax.Party = Class.create(Ajax.Request, {
 Ajax.Party.Util = {};
 Ajax.Party.Util.Methods = {
   Class: {
-    class_default_options: new Object(),
+    class_default_options: {},
     
-    create: function(class_name, default_instance_options, class_default_options) {
-      
-      default_instance_options = (default_instance_options || {});      
-      
+    create: function(class_name, default_instance_options, class_default_options) {      
       var new_class = this[class_name] = Class.create(this, {
         initialize: function($super, url, parameters, callback, options) {
-          //FIXME
-          this.request_options = this.getRequestOptions(options, parameters, callback);
-          this.setCurrentKlass()
-          $super(url, null, null, this.request_options);          
+          var request_options = this.getRequestOptions(options, parameters, callback);
+          this.setKlassForSuperCall()
+          $super(url, null, null, request_options);          
         }
       });
 
       new_class.addMethods(Ajax.Party.Util.Methods.Instance);
       new_class.addMethods({
-        default_options: default_instance_options,
+        default_options: default_instance_options || {},
         klass: this[class_name], 
         superclass: this    
       });      
@@ -83,8 +79,8 @@ Ajax.Party.Util.Methods = {
       return Object.extend(destination, source)
     },
     
-    setCurrentKlass: function() {
-      //FIXME create an array([[klass,superclass]]) at class creation time and shift through them as we go up the chain.
+    setKlassForSuperCall: function() {
+      //TODO
       this.klass = this.superclass;
       this.superclass = this.klass.superclass;
     }    
