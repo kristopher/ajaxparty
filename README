@@ -50,7 +50,10 @@ Or we could subclass Ajax.Party.Post and skip the method option!
 
 Or we could set set the class default option parameters as a function.
 
-  Ajax.Party.Post.create('FormPost', {}, { parameters: function() { $('form').serialize(true) }, onSuccess: StandardForm.callback })
+  Ajax.Party.Post.create('FormPost', {}, { 
+    parameters: function() { $('form').serialize(true) }, 
+    onSuccess: StandardForm.callback 
+  })
   new Ajax.Party.Post.FormPost($('form').action)
 
 Or you can go even further by continuing the subclass craziness.
@@ -82,7 +85,7 @@ instance default options and options passed to the method take precedence over a
 Better Documentation
 Ajax.Party.AutoComplete
 Testing in something other than Firefox 3
-Parameters argument can be passed as a urlencode string
+Parameters argument can be passed as a url encoded string
 
 Homepage:: http://github.com/kristopher/ajaxparty
 License:: Copyright (c) 2008 Kristopher Chambers <maito:kristopher.chambers@gmail.com> and Elijah Miller <mailto:elijah.miller@gmail.com>, released under the MIT license
