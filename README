@@ -85,7 +85,10 @@ instance default options and options passed to the method take precedence over a
 Better Documentation
 Ajax.Party.AutoComplete
 Testing in something other than Firefox 3
-Parameters argument can be passed as a url encoded string
+
+== TODO
+
+Get the tests under control.
 
 Homepage:: http://github.com/kristopher/ajaxparty
 License:: Copyright (c) 2008 Kristopher Chambers <maito:kristopher.chambers@gmail.com> and Elijah Miller <mailto:elijah.miller@gmail.com>, released under the MIT license
