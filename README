@@ -12,7 +12,7 @@ Any Prototype Ajax Options can be passed as options.
 
 A standard form submission request looks like this:
   
-  new Ajax.Party.Post($('form').action, $('form').serialize(true), OnsuccessCallback) 
+  new Ajax.Party.Post($('form').action, $('form').serialize(true), onSuccessCallback) 
 
 Or you can pass the parameters function as an argument.
  
