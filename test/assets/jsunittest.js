@@ -22,6 +22,13 @@ var JsUnitTest = {
         if (useDoubleQuotes) return '"' + escapedString.replace(/"/g, '\\"') + '"';
         return "'" + escapedString.replace(/'/g, '\\\'') + "'";
       };
+      if ((typeof object == 'object') && (object.constructor == Object)) { // its probably an object.
+        var keys_values = new Array(), prefix = 'Object: { ';
+        for (property in object) {
+          keys_values.push(property + ': ' + object[property]);
+        }
+        return (prefix + keys_values.join(', ') + ' }');
+      }
       return String(object);
     } catch (e) {
       if (e instanceof RangeError) return '...';
@@ -69,6 +76,34 @@ var JsUnitTest = {
 
   	return myarray;
   },
+
+  // from now we recursively zip & compare nested arrays
+  areArraysEqual: function(expected, actual) {
+    var expected_array = JsUnitTest.flattenArray(expected);
+    var actual_array   = JsUnitTest.flattenArray(actual);
+    if (expected_array.length == actual_array.length) {
+      for (var i=0; i < expected_array.length; i++) {
+        if (expected_array[i] != actual_array[i]) return false;
+      };
+      return true;
+    }
+    return false;
+  },
+
+  areArraysNotEqual: function(expected, actual) {
+    return !this.areArraysEqual(expected, actual);
+  },
+
+  areHashesEqual: function(expected, actual) {
+    var expected_array = JsUnitTest.hashToSortedArray(expected);
+    var actual_array   = JsUnitTest.hashToSortedArray(actual);
+    return this.areArraysEqual(expected_array, actual_array);
+  },
+
+  areHashesNotEqual: function(expected, actual) {
+    return !this.areHashesNotEqual(expected, actual);
+  },
+
   hashToSortedArray: function(hash) {
     var results = [];
     for (key in hash) {
@@ -564,65 +599,22 @@ JsUnitTest.Unit.Assertions = {
 
   assertEnumEqual: function(expected, actual, message) {
     message = this.buildMessage(message || 'assertEnumEqual', 'expected <?>, actual: <?>', expected, actual);
-    var expected_array = JsUnitTest.flattenArray(expected);
-    var actual_array   = JsUnitTest.flattenArray(actual);
-    this.assertBlock(message, function() {
-      if (expected_array.length == actual_array.length) {
-        for (var i=0; i < expected_array.length; i++) {
-          if (expected_array[i] != actual_array[i]) return false;
-        };
-        return true;
-      }
-      return false;
-    });
+    this.assertBlock(message, function() { return JsUnitTest.areArraysEqual(expected, actual) });
   },
 
   assertEnumNotEqual: function(expected, actual, message) {
     message = this.buildMessage(message || 'assertEnumNotEqual', '<?> was the same as <?>', expected, actual);
-    var expected_array = JsUnitTest.flattenArray(expected);
-    var actual_array   = JsUnitTest.flattenArray(actual);
-    this.assertBlock(message, function() {
-      if (expected_array.length == actual_array.length) {
-        for (var i=0; i < expected_array.length; i++) {
-          if (expected_array[i] != actual_array[i]) return true;
-        };
-        return false;
-      }
-      return true;
-    });
+    this.assertBlock(message, function() { return JsUnitTest.areArraysNotEqual(expected, actual) });
   },
 
   assertHashEqual: function(expected, actual, message) {
-    message = this.buildMessage(message || 'assertHashEqual', 'expected <?>, actual: <?>', expected, actual);
-    var expected_array = JsUnitTest.flattenArray(JsUnitTest.hashToSortedArray(expected));
-    var actual_array   = JsUnitTest.flattenArray(JsUnitTest.hashToSortedArray(actual));
-    var block = function() {
-      if (expected_array.length == actual_array.length) {
-        for (var i=0; i < expected_array.length; i++) {
-          if (expected_array[i] != actual_array[i]) return false;
-        };
-        return true;
-      }
-      return false;
-    };
-    this.assertBlock(message, block);
+    message = this.buildMessage(message || 'assertHashEqual', 'expected <?>, actual: <?>', JsUnitTest.inspect(expected), JsUnitTest.inspect(actual));
+    this.assertBlock(message, function() { return JsUnitTest.areHashesEqual(expected, actual) });
   },
 
   assertHashNotEqual: function(expected, actual, message) {
-    message = this.buildMessage(message || 'assertHashNotEqual', '<?> was the same as <?>', expected, actual);
-    var expected_array = JsUnitTest.flattenArray(JsUnitTest.hashToSortedArray(expected));
-    var actual_array   = JsUnitTest.flattenArray(JsUnitTest.hashToSortedArray(actual));
-    // from now we recursively zip & compare nested arrays
-    var block = function() {
-      if (expected_array.length == actual_array.length) {
-        for (var i=0; i < expected_array.length; i++) {
-          if (expected_array[i] != actual_array[i]) return true;
-        };
-        return false;
-      }
-      return true;
-    };
-    this.assertBlock(message, block);
+    message = this.buildMessage(message || 'assertHashNotEqual', '<?> was the same as <?>', JsUnitTest.inspect(expected), JsUnitTest.inspect(actual));
+    this.assertBlock(message, function() { return JsUnitTest.areHashesNotEqual(expected, actual) });
   },
 
   assertIdentical: function(expected, actual, message) {
