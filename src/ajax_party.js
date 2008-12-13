@@ -55,6 +55,8 @@ Ajax.Party.Util.Methods = {
         if (object.parameters) {
           if (Object.isFunction(object.parameters)) {
             object.parameters = object.parameters();
+          } else if (Object.isString(object.parameters)) {
+            object.parameters = object.parameters.parseQuery();
           }      
           object.parameters = Object.clone(object.parameters);
         }
