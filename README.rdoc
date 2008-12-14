@@ -6,6 +6,7 @@ Simplified Prototype Ajax Requests with class inheritable options.
 == Example
 
 Syntax
+  
   new Ajax.Party.Post(url, parameters, onSuccessCallback, options)
   
 Any Prototype Ajax Options can be passed as options. 
