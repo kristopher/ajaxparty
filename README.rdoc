@@ -31,7 +31,9 @@ rails autenticity token? Just include it in the default options.
 Maybe you only want to set the options for post requests?
   
   Ajax.Party.Post.class_default_options = {
-    'authenticity_token': 'some_token
+    parameters: {
+      'authenticity_token': 'some_token'
+    }
   }
   
 Every request that uses Ajax.Party.Post or one of it's subclasses will have
